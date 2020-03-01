@@ -1,6 +1,7 @@
 package com.changgou.goods.service;
 
 import com.changgou.goods.pojo.Brand;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -11,6 +12,24 @@ import java.util.List;
  * @version: 1.0
  */
 public interface BrandService {
+
+
+    /**
+     * 条件分页查询
+     * @param page 当前页
+     * @param size 每页显示条数
+     * @param brand 搜索条件
+     * @return
+     */
+    PageInfo<Brand> findPage(Brand brand, Integer page, Integer size);
+
+    /**
+     * 分页查询
+     * @param page 当前页
+     * @param size 每页显示条数
+     * @return
+     */
+    PageInfo<Brand> findPage(Integer page, Integer size);
 
     /**
      * 按条件查询

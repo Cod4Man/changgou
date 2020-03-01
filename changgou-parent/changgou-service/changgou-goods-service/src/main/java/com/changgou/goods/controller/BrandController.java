@@ -23,6 +23,18 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+    @PostMapping("/{page}/{size}")
+    public Result<List<Brand>> findPage(@RequestBody Brand brand, @PathVariable Integer page, @PathVariable Integer size) {
+        return new Result<>(true, StatusCode.OK, "按条件分页查询成功！", brandService.findPage(brand, page, size));
+    }
+
+    @GetMapping("/{page}/{size}")
+    public Result<List<Brand>> findPage(@PathVariable Integer page, @PathVariable Integer size) {
+        if (true)
+        throw new RuntimeException("测试异常！！！！！！！~~~~~~~~~~~~~~~~~~~~~~~~~");
+        return new Result<>(true, StatusCode.OK, "分页查询成功！", brandService.findPage(page, size));
+    }
+
     @GetMapping
     public Result<List<Brand>> findAll() {
         return new Result<>(true, StatusCode.OK, "查询全部成功！", brandService.findAll());

@@ -3,12 +3,15 @@ package com.changgou.goods.service.impl;
 import com.changgou.goods.dao.BrandMapper;
 import com.changgou.goods.pojo.Brand;
 import com.changgou.goods.service.BrandService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
+import utils.BaseExceptionHandler;
 
 import java.util.List;
 
@@ -20,17 +23,36 @@ import java.util.List;
  */
 @Service
 public class BrandServiceImpl implements BrandService {
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private BrandMapper brandMapper;
 
     @Override
+    public PageInfo<Brand> findPage(Brand brand, Integer page, Integer size) {
+        // PageHelper会用到ThreadLocal，把分页信息存储在线程中
+        PageHelper.startPage(page, size);
+        return new PageInfo<>(this.findList(brand));
+    }
+
+    @Override
+    public PageInfo<Brand> findPage(Integer page, Integer size) {
+        // PageHelper会用到ThreadLocal，把分页信息存储在线程中
+        PageHelper.startPage(page, size);
+        return new PageInfo<>(brandMapper.selectAll());
+    }
+
+
+    @Override
     public List<Brand> findList(Brand brand) {
         if (brand == null) {
             return null;
         }
+        Example example = getExample(brand);
+        return brandMapper.selectByExample(example);
+    }
+
+    private Example getExample(Brand brand) {
         Example example = new Example(Brand.class);
         Example.Criteria criteria = example.createCriteria();
 
@@ -40,7 +62,7 @@ public class BrandServiceImpl implements BrandService {
         if (StringUtil.isNotEmpty(brand.getLetter())) {
             criteria.andEqualTo("letter", brand.getLetter());
         }
-        return brandMapper.selectByExample(example);
+        return example;
     }
 
     @Override
